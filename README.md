@@ -1,1 +1,1 @@
-Minimal api to update Mihon extensions for whatever languages you want
+Minimal API to update Mihon extensions for only the languages you want
