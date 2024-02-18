@@ -1,4 +1,11 @@
+
+using MyLangs4Extensions.Models;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+
 var builder = WebApplication.CreateBuilder(args);
+
+
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -16,29 +23,31 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+HttpClient client = new();
 
-app.MapGet("/weatherforecast", () =>
+async Task<string> GetExternalExtensions(string url)
 {
-    var forecast = Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
+    client.DefaultRequestHeaders.Accept.Clear();
+    client.DefaultRequestHeaders.Accept.Add(
+        new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+    HttpResponseMessage response = await client.GetAsync(url);
+    response.EnsureSuccessStatusCode();
+    var result = await response.Content.ReadAsStringAsync();
+    return result;
+}
+
+List<Extension> ToExtension(string content)
+{
+    List<Extension>? extensions = JsonConvert.DeserializeObject<List<Extension>>(content);
+    return extensions;
+}
+
+app.MapGet("/extensions", async (string url) =>
+{
+    var result = await GetExternalExtensions(url);
+    return ToExtension(result);
 })
-.WithName("GetWeatherForecast")
+.WithName("GetContent")
 .WithOpenApi();
 
 app.Run();
-
-internal record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
