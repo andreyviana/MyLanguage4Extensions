@@ -1,4 +1,6 @@
 
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging.Abstractions;
 using MyLangs4Extensions.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -36,18 +38,36 @@ async Task<string> GetExternalExtensions(string url)
     return result;
 }
 
-List<Extension> ToExtension(string content)
+List<Extension> ExtensionsJson(string content)
 {
     List<Extension>? extensions = JsonConvert.DeserializeObject<List<Extension>>(content);
     return extensions;
 }
 
-app.MapGet("/extensions", async (string url) =>
+List<Extension> RemoveUnwantedLangs(List<Extension> extensions, string[] wantedLangs)
+{
+    List<Extension> newExtensions = [];
+
+    foreach (var extension in extensions)
+    {
+        if (wantedLangs.Contains(extension.Lang))
+            newExtensions.Add(extension);
+    }
+
+    return newExtensions;
+}
+
+app.MapGet("/extensions", async (string url,[FromQuery] params string[] lang) =>
 {
     var result = await GetExternalExtensions(url);
-    return ToExtension(result);
+    return RemoveUnwantedLangs(ExtensionsJson(result), lang);
 })
 .WithName("GetContent")
 .WithOpenApi();
 
 app.Run();
+
+internal record AddLangs
+(
+    List<string> Langs
+);
