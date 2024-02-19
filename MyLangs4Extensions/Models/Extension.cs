@@ -13,4 +13,18 @@ namespace MyLangs4Extensions.Models
         public int Nsfw { get; set; }
         public List<Source> Sources { get; set; }
     }
+
+    public class ExtensionExtended
+    {
+        public string Name { get; set; }
+        public string Pkg { get; set; }
+        public string Apk { get; set; }
+        public string Lang { get; set; }
+        public int Code { get; set; }
+        public string Version { get; set; }
+        public int Nsfw { get; set; }
+        public int HasReadme { get; set; }
+        public int HasChangelog {  get; set; }
+        public List<Source> Sources { get; set; }
+    }
 }
