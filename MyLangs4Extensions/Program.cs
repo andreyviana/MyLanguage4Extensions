@@ -38,9 +38,9 @@ async Task<string> GetExternalExtensions(string url)
     return result;
 }
 
-List<Extension> ExtensionsJson(string content)
+List<T> ExtensionsJson<T>(string content)
 {
-    List<Extension>? extensions = JsonConvert.DeserializeObject<List<Extension>>(content);
+    List<T>? extensions = JsonConvert.DeserializeObject<List<T>>(content);
     return extensions;
 }
 
@@ -57,12 +57,33 @@ List<Extension> RemoveUnwantedLangs(List<Extension> extensions, string[] wantedL
     return newExtensions;
 }
 
+List<ExtensionExtended> RemoveUnwantedLangsExtended(List<ExtensionExtended> extensions, string[] wantedLangs)
+{
+    List<ExtensionExtended> newExtensions = [];
+
+    foreach (var extension in extensions)
+    {
+        if (wantedLangs.Contains(extension.Lang))
+            newExtensions.Add(extension);
+    }
+
+    return newExtensions;
+}
+
 app.MapGet("/extensions", async (string url,[FromQuery] params string[] lang) =>
 {
     var result = await GetExternalExtensions(url);
-    return RemoveUnwantedLangs(ExtensionsJson(result), lang);
+    return RemoveUnwantedLangs(ExtensionsJson<Extension>(result), lang);
 })
 .WithName("GetContent")
+.WithOpenApi();
+
+app.MapGet("/extensions-extended", async (string url, [FromQuery] params string[] lang) =>
+{
+    var result = await GetExternalExtensions(url);
+    return RemoveUnwantedLangsExtended(ExtensionsJson<ExtensionExtended>(result), lang);
+})
+.WithName("GetContentExtended")
 .WithOpenApi();
 
 app.Run();
