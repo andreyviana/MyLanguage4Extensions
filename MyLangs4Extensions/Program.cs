@@ -1,9 +1,7 @@
 
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging.Abstractions;
 using MyLangs4Extensions.Models;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -87,8 +85,3 @@ app.MapGet("/extensions-extended", async (string url, [FromQuery] params string[
 .WithOpenApi();
 
 app.Run();
-
-internal record AddLangs
-(
-    List<string> Langs
-);
