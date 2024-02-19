@@ -1,4 +1,6 @@
-﻿namespace MyLangs4Extensions.Models
+﻿using MyLangs4Extensions.Models;
+
+namespace MyLangs4Extensions.Models
 {
     public class Extension
     {
@@ -8,7 +10,7 @@
         public string Lang { get; set; }
         public int Code { get; set; }
         public string Version { get; set; }
-        public bool Nsfw { get; set; }
+        public int Nsfw { get; set; }
         public List<Source> Sources { get; set; }
     }
 }
