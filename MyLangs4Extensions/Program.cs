@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using MyLangs4Extensions.Models;
 using Newtonsoft.Json;
+using System.Linq;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -49,7 +50,10 @@ List<Extension> RemoveUnwantedLangs(List<Extension> extensions, string[] wantedL
     foreach (var extension in extensions)
     {
         if (wantedLangs.Contains(extension.Lang))
+        {
+            extension.Sources = extension.Sources.Where(x => wantedLangs.Contains(x.Lang)).ToList();
             newExtensions.Add(extension);
+        }
     }
 
     return newExtensions;
@@ -62,7 +66,10 @@ List<ExtensionExtended> RemoveUnwantedLangsExtended(List<ExtensionExtended> exte
     foreach (var extension in extensions)
     {
         if (wantedLangs.Contains(extension.Lang))
+        {
+            extension.Sources = extension.Sources.Where(source => wantedLangs.Contains(source.Lang)).ToList();
             newExtensions.Add(extension);
+        }
     }
 
     return newExtensions;
